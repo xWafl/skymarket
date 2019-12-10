@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { WebSocketRequest } from "@/utils/websocket";
 export default {
   name: "ItemPriceGraph",
   data() {
@@ -28,28 +29,35 @@ export default {
             data: this.aPrices
           }
         ]
-      },
-      mounted() {
-        console.log("t");
-        this.$ws.send(
-          new WebSocketRequest(
-            "search",
-            "Enchanted Diamond",
-            resp => {
-              let erg = JSON.parse(resp);
-              if (resp.type == "item") {
-                this.aTimes = erg.map(item => item.end);
-                let aPrices = erg.map(item => item.price);
-              }
-            },
-            err => {
-              console.log("err callback");
-              console.log(err);
-            }
-          )
-        );
       }
     };
+  },
+  mounted() {
+    console.log("t");
+    this.$ws.send(
+      new WebSocketRequest(
+        "itemDetails",
+        JSON.stringify({
+          name: "Cobblestone",
+          start: new Date(2019, 11, 1).getTime() / 1000,
+          end: new Date(2019, 11, 10).getTime() / 1000
+        }),
+        resp => {
+          let erg = JSON.parse(resp.data);
+          console.log(erg);
+          if (erg.type == "item") {
+            let data = JSON.parse(erg.data);
+            console.log(data);
+            this.aTimes = data.map(item => new Date(item.end));
+            this.aPrices = data.map(item => item.price);
+          }
+        },
+        err => {
+          console.log("err callback");
+          console.log(err);
+        }
+      )
+    );
   }
 };
 </script>
