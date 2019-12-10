@@ -22,7 +22,7 @@ export default {
   components: {
     Search,
     ItemInfo,
-    PlayerInfo
+    PlayerInfo,
   },
   data() {
     return {

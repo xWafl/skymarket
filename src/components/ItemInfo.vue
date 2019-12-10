@@ -21,11 +21,7 @@
     </ion-item>
 
     <!-- Diagram -->
-    <ion-item>
-      <ion-col>
-        <ion-img :src="require('../assets/demoChart.png')"></ion-img>
-      </ion-col>
-    </ion-item>
+    <ItemPriceGraph></ItemPriceGraph>
 
     <ion-item>
       <ion-label>Average Price</ion-label>
@@ -39,8 +35,12 @@
 </template>
 
 <script>
+import ItemPriceGraph from './ItemPriceGraph.vue';
 export default {
   name: "item-info",
+  components: {
+    ItemPriceGraph
+  },
   mounted() {},
   methods: {
     switchView() {

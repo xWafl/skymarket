@@ -5,8 +5,10 @@ import Ionic from "@ionic/vue";
 import { stringStartsWith } from "./utils/functions";
 import "@ionic/core/css/ionic.bundle.css";
 import { WebSocketManager } from "./utils/websocket";
+import HighchartsVue from 'highcharts-vue'
 
 Vue.use(Ionic);
+Vue.use(HighchartsVue);
 Vue.config.productionTip = false;
 
 // android / ios message pop-up
