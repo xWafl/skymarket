@@ -2,6 +2,8 @@
 
 ## Project setup
 ```
+https://github.com/Flou21/Hypixel-skyblock-frontend.git
+cd Hypixel-skyblock-frontend
 npm install
 ```
 
