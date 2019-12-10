@@ -4,7 +4,7 @@ import router from "./router";
 import Ionic from "@ionic/vue";
 import { stringStartsWith } from "./utils/functions";
 import "@ionic/core/css/ionic.bundle.css";
-import { WebSocketManager } from "./utils/websocket";
+import { WebSocketManager, WebSocketRequest } from "./utils/websocket";
 
 Vue.use(Ionic);
 Vue.config.productionTip = false;
@@ -27,6 +27,7 @@ Vue.prototype.$showAlert = function showAlert(
 Vue.prototype.$stringStartsWith = stringStartsWith;
 
 Vue.prototype.$ws = new WebSocketManager();
+
 
 new Vue({
   router,
