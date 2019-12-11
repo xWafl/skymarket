@@ -27,7 +27,6 @@ Vue.prototype.$showAlert = function showAlert(
 };
 
 Vue.prototype.$stringStartsWith = stringStartsWith;
-
 Vue.prototype.$ws = new WebSocketManager();
 
 export const bus = new Vue();
