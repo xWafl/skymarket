@@ -1,17 +1,15 @@
 <template>
-  <div>
-    <highcharts :options="chartOptions"></highcharts>
-  </div>
+  <div id="chartContainer"></div>
 </template>
 
 <script>
 import { WebSocketRequest } from "@/utils/websocket";
+import { bus } from "../main";
 export default {
   name: "ItemPriceGraph",
   data() {
     return {
-      aTimes: [],
-      aPrices: [],
+      chart: undefined,
       chartOptions: {
         chart: {
           type: "spline"
@@ -32,32 +30,37 @@ export default {
       }
     };
   },
-  mounted() {
-    console.log("t");
-    this.$ws.send(
-      new WebSocketRequest(
-        "itemDetails",
-        JSON.stringify({
-          name: "Cobblestone",
-          start: new Date(2019, 11, 1).getTime() / 1000,
-          end: new Date(2019, 11, 10).getTime() / 1000
-        }),
-        resp => {
-          let erg = JSON.parse(resp.data);
-          console.log(erg);
-          if (erg.type == "item") {
-            let data = JSON.parse(erg.data);
-            console.log(data);
-            this.aTimes = data.map(item => new Date(item.end));
-            this.aPrices = data.map(item => item.price);
+  methods: {
+    getChartData(sSearch) {
+      this.$ws.send(
+        new WebSocketRequest(
+          "itemDetails",
+          JSON.stringify({
+            name: sSearch,
+            start: new Date(2019, 11, 1).getTime() / 1000,
+            end: new Date(2019, 11, 10).getTime() / 1000
+          }),
+          resp => {
+            let erg = JSON.parse(resp.data);
+            if (erg.type == "item") {
+              let data = JSON.parse(erg.data);
+              this.chart.xAxis[0].setCategories(data.map(item => new Date(item.end)));
+              this.chart.series[0].setData(data.map(item => item.price));
+            }
+          },
+          err => {
+            console.log("err callback");
+            console.log(err);
           }
-        },
-        err => {
-          console.log("err callback");
-          console.log(err);
-        }
-      )
-    );
+        )
+      );
+    }
+  },
+  mounted() {
+    this.chart = Highcharts.chart("chartContainer", this.chartOptions);
+    bus.$on("search-changed", sToSearch => {
+      this.getChartData(sToSearch);
+    });
   }
 };
 </script>

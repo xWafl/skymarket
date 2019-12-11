@@ -5,17 +5,21 @@
         <ion-grid>
           <ion-row>
             <ion-col width-75>
-              <ion-input
-                :value="inp"
-                placeholder="Enter Player or Item name"
-                @input="search($event)"
-              ></ion-input>
+              <!-- 
+                debounce: time before ionChange is fired
+              -->
+              <ion-searchbar
+                placeholder="search item or player"
+                :value="searchInput"
+                debounce=500
+                @ionChange="search($event)"
+              ></ion-searchbar>
             </ion-col>
           </ion-row>
           <ion-list v-if="suggestions.length > 0">
-            <ion-row v-for="sug in suggestions" v-bind:key="sug">
+            <ion-row v-for="item in suggestions" v-bind:key="item">
               <ion-col>
-                <ion-item>{{ sug }}</ion-item>
+                <ion-item button="true" @click="item_selected($event,item)">{{ item }}</ion-item>
               </ion-col>
             </ion-row>
           </ion-list>
@@ -26,13 +30,14 @@
 </template>
 
 <script>
+import { bus } from "../main";
 export default {
   name: "Search",
   data() {
     return {
-      inp: "",
+      searchInput: "",
       items: [
-        "Cobblstone",
+        "Cobblestone",
         "Gold Helmet",
         "Diamond Sword",
         "Gold Pickaxe",
@@ -44,27 +49,29 @@ export default {
   mounted() {},
   methods: {
     search(e) {
-      this.inp = e.srcElement.value;
-      this.suggestions = [];
-      if (this.inp.length > 0) {
-        this.items.forEach(e => {
-          if (this.$stringStartsWith(e, this.inp, true)) {
-            this.suggestions.push(e);
-          }
-        });
+      let sToSearch = e.target.value;
+      
+      if (sToSearch != "") {
+        this.suggestions = this.items.filter(item =>
+          item.startsWith(sToSearch)
+        );
+      } else {
+        this.suggestions = [];
       }
+    },
+    item_selected(e, item_name) {
+      if (!item_name) {
+        return;
+      }
+      this.clearSearchFields();
+      bus.$emit("search-changed", item_name);
     },
     onSubmit(e) {
       e.preventDefault();
-      // insert "regex".test(this.inp);
-      const isValid = this.inp > 1000;
-      if (!isValid) {
-        this.$showAlert("Error", "Nothing found", ["Ok"]);
-        this.inp = "";
-      } else {
-        this.$emit("get-code", this.inp);
-        this.inp = "";
-      }
+    },
+    clearSearchFields() {
+      this.suggestions = [];
+      this.searchInput = null;
     }
   }
 };

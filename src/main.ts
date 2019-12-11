@@ -30,7 +30,7 @@ Vue.prototype.$stringStartsWith = stringStartsWith;
 
 Vue.prototype.$ws = new WebSocketManager();
 
-
+export const bus = new Vue();
 new Vue({
   router,
   render: h => h(App)
