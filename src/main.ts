@@ -27,8 +27,21 @@ Vue.prototype.$showAlert = function showAlert(
 };
 
 Vue.prototype.$stringStartsWith = stringStartsWith;
+let ws = new WebSocketManager();
+Vue.prototype.$ws = ws;
 
-Vue.prototype.$ws = new WebSocketManager();
+ws.send(new WebSocketRequest(
+  "search",
+  "dea",
+  (resp: any) => {
+    window.console.log(resp);
+  },
+  (err: any) => {
+    window.console.log("err callback");
+    window.console.log(err);
+  }
+)
+);
 
 
 new Vue({
