@@ -1,11 +1,10 @@
-
 let requests: Array<WebSocketRequest> = [];
 
 export class WebSocketManager {
   public ws: WebSocket;
 
   constructor() {
-    this.ws = new WebSocket("ws://84.200.7.41:8008/skyblock");
+    this.ws = new WebSocket("wss://84.200.7.41:8008/skyblock");
     this.ws.onmessage = this.onMessage;
     this.ws.onclose = this.onClose;
     this.ws.onerror = this.onError;
@@ -51,7 +50,7 @@ export class WebSocketManager {
 
   onError(err: any): void {
     //TODO something
-    console.log(err);
+    // console.log(err);
   }
 
   onClose(): void {
