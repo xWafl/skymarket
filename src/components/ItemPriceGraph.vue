@@ -9,6 +9,7 @@ export default {
   name: "ItemPriceGraph",
   data() {
     return {
+      fetchspan: undefined,
       item_name: "",
       chart: undefined,
       chartOptions: {
@@ -36,8 +37,7 @@ export default {
           "itemDetails",
           JSON.stringify({
             name: sSearch,
-            start: new Date(2019, 11, 1).getTime() / 1000,
-            end: new Date(2019, 11, 10).getTime() / 1000
+            end: fetchspan/1000
           }),
           resp => {
             if (resp.type == "item") {
@@ -63,10 +63,19 @@ export default {
       this.item_name = sToSearch;
       this.getChartData(sToSearch);
     });
+    bus.$on("fetchspan-changed", fetchspan => {
+      if (this.item_name && fetchspan) {
+        this.fetchspan = fetchspan;
+        this.getChartData(this.item_name);
+      }
+    });
+    bus.$on("initialize-fetchspan", fetchspan =>{
+      this.fetchspan = fetchspan;
+    })
   }
 };
 </script>
 
 <style>
-  /* style */
+/* style */
 </style>

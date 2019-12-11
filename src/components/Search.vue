@@ -4,25 +4,23 @@
       <ion-toolbar>
         <ion-grid>
           <ion-row>
-            <ion-col width-75>
-              <!-- 
+            <!-- 
                 debounce: time before ionChange is fired
-              -->
-              <ion-searchbar
-                placeholder="search item or player"
-                :value="searchInput"
-                debounce="400"
-                @ionChange="search($event)"
-              ></ion-searchbar>
-            </ion-col>
+            -->
+            <ion-searchbar
+              placeholder="search item or player"
+              :value="searchInput"
+              debounce="400"
+              @ionChange="search($event)"
+            ></ion-searchbar>
           </ion-row>
           <ion-list v-if="suggestions.length > 0">
             <ion-row v-for="item in suggestions" v-bind:key="item">
-              <ion-col>
-                <ion-item button="true" @click="item_selected($event, item)">{{
-                  item
-                }}</ion-item>
-              </ion-col>
+              <ion-item button="true" @click="item_selected($event, item)">
+                {{
+                item
+                }}
+              </ion-item>
             </ion-row>
           </ion-list>
         </ion-grid>

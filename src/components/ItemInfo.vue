@@ -9,8 +9,7 @@
               v-bind:color="button.color"
               expand="block"
               @click="onTimespanButton_clicked($event, button.id)"
-              >{{ button.text }}</ion-button
-            >
+            >{{button.text}}</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -35,6 +34,7 @@ const COLOR_CLICKED_BUTTON = "primary";
 const COLOR_UNCLICKED_BUTTON = "tertiary";
 
 import ItemPriceGraph from "./ItemPriceGraph.vue";
+import { bus } from "../main";
 export default {
   name: "item-info",
   components: {
@@ -42,43 +42,44 @@ export default {
   },
   data() {
     return {
+      auction_fetchspan: undefined,
       buttons: [
         {
           id: 1,
           color: COLOR_CLICKED_BUTTON,
           text: "1 Day",
           isClicked: true,
-          timespan: 1000 * 60 * 60 * 24
+          fetchspan: "day"
         },
         {
           id: 2,
           color: COLOR_UNCLICKED_BUTTON,
           text: "1 Week",
           isClicked: false,
-          timespan: 1000 * 60 * 60 * 24 * 7
+          fetchspan: "week"
         },
         {
           id: 3,
           color: COLOR_UNCLICKED_BUTTON,
           text: "1 Month",
           isClicked: false,
-          timespan: new Date(
-            new Date().getFullYear(),
-            new Date().getMonth() - 1,
-            new Date().getDate()
-          )
+          fetchspan: "month"
         },
         {
           id: 4,
           color: COLOR_UNCLICKED_BUTTON,
           text: "All Time",
           isClicked: false,
-          timespan: new Date().getTime()
+          fetchspan: "all"
         }
       ]
     };
   },
-  mounted() {},
+  mounted() {
+    // initialize ItemPriceGraph fetchspan
+    this.auction_fetchspan = this.getDateForAuctionFetchFromButton("day");
+    bus.$emit("initialize-fetchspan", this.auction_fetchspan);
+  },
   methods: {
     switchView() {
       this.$emit("switch-view");
@@ -91,8 +92,32 @@ export default {
         } else {
           button.color = COLOR_CLICKED_BUTTON;
           button.isClicked = true;
+          this.auction_fetchspan = this.getDateForAuctionFetchFromButton(
+            button.fetchspan
+          );
         }
       });
+      bus.$emit("fetchspan-changed", this.auction_fetchspan);
+    },
+    getDateForAuctionFetchFromButton(sFetchspan) {
+      let dResult = new Date();
+      switch (sFetchspan) {
+        case "day":
+          dResult.setUTCDate(dResult.getUTCDate() - 1);
+          break;
+        case "week":
+          dResult.setUTCDate(dResult.getUTCDate() - 7);
+          break;
+        case "month":
+          dResult.setUTCMonth(dResult.getUTCMonth() - 1);
+          break;
+        case "all":
+          dResult = new Date(0);
+          break;
+        default:
+          throw "Timespan not supported";
+      }
+      return dResult;
     }
   }
 };
