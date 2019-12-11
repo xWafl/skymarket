@@ -4,7 +4,7 @@ import router from "./router";
 import Ionic from "@ionic/vue";
 import { stringStartsWith } from "./utils/functions";
 import "@ionic/core/css/ionic.bundle.css";
-import HighchartsVue from 'highcharts-vue'
+import HighchartsVue from "highcharts-vue";
 import { WebSocketManager, WebSocketRequest } from "./utils/websocket";
 
 Vue.use(Ionic);
