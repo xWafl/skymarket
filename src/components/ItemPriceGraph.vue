@@ -9,6 +9,7 @@ export default {
   name: "ItemPriceGraph",
   data() {
     return {
+      item_name: "",
       chart: undefined,
       chartOptions: {
         chart: {
@@ -18,13 +19,11 @@ export default {
           text: "item price graph"
         },
         xAxis: {
-          categories: this.aTimes,
           visible: false
         },
         series: [
           {
             name: "item price",
-            data: this.aPrices
           }
         ]
       }
@@ -41,10 +40,12 @@ export default {
             end: new Date(2019, 11, 10).getTime() / 1000
           }),
           resp => {
-            let erg = JSON.parse(resp.data);
-            if (erg.type == "item") {
-              let data = JSON.parse(erg.data);
-              this.chart.xAxis[0].setCategories(data.map(item => new Date(item.end)));
+            if (resp.type == "item") {
+              let data = JSON.parse(resp.data);
+              this.chart.setTitle({ text: this.item_name + " price graph" });
+              this.chart.xAxis[0].setCategories(
+                data.map(item => new Date(item.end))
+              );
               this.chart.series[0].setData(data.map(item => item.price));
             }
           },
@@ -59,6 +60,7 @@ export default {
   mounted() {
     this.chart = Highcharts.chart("chartContainer", this.chartOptions);
     bus.$on("search-changed", sToSearch => {
+      this.item_name = sToSearch;
       this.getChartData(sToSearch);
     });
   }

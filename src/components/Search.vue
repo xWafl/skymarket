@@ -11,7 +11,7 @@
               <ion-searchbar
                 placeholder="search item or player"
                 :value="searchInput"
-                debounce=500
+                debounce="400"
                 @ionChange="search($event)"
               ></ion-searchbar>
             </ion-col>
@@ -31,30 +31,30 @@
 
 <script>
 import { bus } from "../main";
+import storedItems from "../utils/items.json"
 export default {
   name: "Search",
   data() {
     return {
       searchInput: "",
-      items: [
-        "Cobblestone",
-        "Gold Helmet",
-        "Diamond Sword",
-        "Gold Pickaxe",
-        "Gold Boots"
-      ],
+      items: storedItems,
       suggestions: []
     };
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     search(e) {
       let sToSearch = e.target.value;
-      
-      if (sToSearch != "") {
-        this.suggestions = this.items.filter(item =>
-          item.startsWith(sToSearch)
+      if (sToSearch) {
+        sToSearch = sToSearch.toLowerCase();
+        var aMatches = this.items.filter(item =>
+          item.toLowerCase().startsWith(sToSearch)
         );
+        if(aMatches.length > 5){
+          aMatches = aMatches.slice(0,5);
+        }
+        this.suggestions = aMatches;
       } else {
         this.suggestions = [];
       }
