@@ -8,8 +8,9 @@
             <ion-button
               v-bind:color="button.color"
               expand="block"
-              @click="onTimespanButton_clicked($event,button.id)"
-            >{{button.text}}</ion-button>
+              @click="onTimespanButton_clicked($event, button.id)"
+              >{{ button.text }}</ion-button
+            >
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -42,10 +43,38 @@ export default {
   data() {
     return {
       buttons: [
-        { id: 1, color: COLOR_CLICKED_BUTTON, text: "1 Day", isClicked: true, timespan: 1000*60*60*24},
-        { id: 2, color: COLOR_UNCLICKED_BUTTON, text: "1 Week", isClicked: false, timespan: 1000*60*60*24*7},
-        { id: 3, color: COLOR_UNCLICKED_BUTTON, text: "1 Month", isClicked: false, timespan: new Date(new Date().getFullYear(),new Date().getMonth()-1,new Date().getDate())},
-        { id: 4, color: COLOR_UNCLICKED_BUTTON, text: "All Time", isClicked: false, timespan: new Date().getTime()}
+        {
+          id: 1,
+          color: COLOR_CLICKED_BUTTON,
+          text: "1 Day",
+          isClicked: true,
+          timespan: 1000 * 60 * 60 * 24
+        },
+        {
+          id: 2,
+          color: COLOR_UNCLICKED_BUTTON,
+          text: "1 Week",
+          isClicked: false,
+          timespan: 1000 * 60 * 60 * 24 * 7
+        },
+        {
+          id: 3,
+          color: COLOR_UNCLICKED_BUTTON,
+          text: "1 Month",
+          isClicked: false,
+          timespan: new Date(
+            new Date().getFullYear(),
+            new Date().getMonth() - 1,
+            new Date().getDate()
+          )
+        },
+        {
+          id: 4,
+          color: COLOR_UNCLICKED_BUTTON,
+          text: "All Time",
+          isClicked: false,
+          timespan: new Date().getTime()
+        }
       ]
     };
   },

@@ -19,7 +19,9 @@
           <ion-list v-if="suggestions.length > 0">
             <ion-row v-for="item in suggestions" v-bind:key="item">
               <ion-col>
-                <ion-item button="true" @click="item_selected($event,item)">{{ item }}</ion-item>
+                <ion-item button="true" @click="item_selected($event, item)">{{
+                  item
+                }}</ion-item>
               </ion-col>
             </ion-row>
           </ion-list>
@@ -31,7 +33,7 @@
 
 <script>
 import { bus } from "../main";
-import storedItems from "../utils/items.json"
+import storedItems from "../utils/items.json";
 export default {
   name: "Search",
   data() {
@@ -41,8 +43,7 @@ export default {
       suggestions: []
     };
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     search(e) {
       let sToSearch = e.target.value;
@@ -51,8 +52,8 @@ export default {
         var aMatches = this.items.filter(item =>
           item.toLowerCase().startsWith(sToSearch)
         );
-        if(aMatches.length > 5){
-          aMatches = aMatches.slice(0,5);
+        if (aMatches.length > 5) {
+          aMatches = aMatches.slice(0, 5);
         }
         this.suggestions = aMatches;
       } else {

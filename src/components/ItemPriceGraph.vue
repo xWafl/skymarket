@@ -23,7 +23,7 @@ export default {
         },
         series: [
           {
-            name: "item price",
+            name: "item price"
           }
         ]
       }
@@ -68,4 +68,5 @@ export default {
 </script>
 
 <style>
+  /* style */
 </style>
