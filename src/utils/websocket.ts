@@ -4,7 +4,7 @@ export class WebSocketManager {
   public ws: WebSocket;
 
   constructor() {
-    this.ws = new WebSocket("wss://84.200.7.41:8008/skyblock");
+    this.ws = new WebSocket("wss://skyblock-backend.coflnet.com/skyblock");
     this.ws.onmessage = this.onMessage;
     this.ws.onclose = this.onClose;
     this.ws.onerror = this.onError;
@@ -31,7 +31,7 @@ export class WebSocketManager {
   }
 
   onOpen(): void {
-    // nothing to do for now
+    //nothing to do for now
   }
 
   onMessage(response: any): void {

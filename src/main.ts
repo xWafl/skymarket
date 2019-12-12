@@ -5,7 +5,8 @@ import Ionic from "@ionic/vue";
 import { stringStartsWith } from "./utils/functions";
 import "@ionic/core/css/ionic.bundle.css";
 import HighchartsVue from "highcharts-vue";
-import { WebSocketManager, WebSocketRequest } from "./utils/websocket";
+import { WebSocketManager } from "./utils/websocket";
+import './registerServiceWorker'
 
 Vue.use(Ionic);
 Vue.use(HighchartsVue);
