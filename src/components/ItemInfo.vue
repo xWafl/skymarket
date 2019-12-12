@@ -20,7 +20,7 @@
 
     <ion-item>
       <ion-label>Average Price</ion-label>
-      <ion-badge slot="end" color="light">22</ion-badge>
+      <ion-badge slot="end" color="light">{{average_price}}</ion-badge>
     </ion-item>
 
     <ion-col>
@@ -35,6 +35,7 @@ const COLOR_UNCLICKED_BUTTON = "tertiary";
 
 import ItemPriceGraph from "./ItemPriceGraph.vue";
 import { bus } from "../main";
+import { numberFormat } from 'highcharts';
 export default {
   name: "item-info",
   components: {
@@ -43,6 +44,7 @@ export default {
   data() {
     return {
       auction_fetchspan: undefined,
+      average_price: 0,
       buttons: [
         {
           id: 1,
@@ -79,6 +81,9 @@ export default {
     // initialize ItemPriceGraph fetchspan
     this.auction_fetchspan = this.getDateForAuctionFetchFromButton("day");
     bus.$emit("initialize-fetchspan", this.auction_fetchspan);
+    bus.$on("average_item_price_updated", nPrice => {
+      this.average_price = numberFormat((Math.round(nPrice*100.0)/100.0),2);
+    })
   },
   methods: {
     switchView() {

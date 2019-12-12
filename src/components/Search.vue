@@ -10,7 +10,7 @@
             <ion-searchbar
               placeholder="search item or player"
               :value="searchInput"
-              debounce="400"
+              debounce="0"
               @ionChange="search($event)"
             ></ion-searchbar>
           </ion-row>
@@ -67,6 +67,9 @@ export default {
     },
     onSubmit(e) {
       e.preventDefault();
+      if (this.suggestions[0]) {
+        this.item_selected(null, this.suggestions[0]);
+      }
     },
     clearSearchFields() {
       this.suggestions = [];
