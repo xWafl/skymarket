@@ -42,7 +42,7 @@ export default {
               d.toLocaleDateString() +
               "<br/>" +
               "price: " +
-              numberFormat(this.y,2)
+              numberFormat(this.y,0)
             );
           }
         }

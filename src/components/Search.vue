@@ -10,7 +10,7 @@
             <ion-searchbar
               placeholder="search item or player"
               :value="searchInput"
-              debounce="0"
+              debounce="100"
               @ionChange="search($event)"
             ></ion-searchbar>
           </ion-row>
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { WebSocketRequest } from "@/utils/websocket";
 import { bus } from "../main";
 import storedItems from "../utils/items.json";
 export default {
@@ -52,11 +53,37 @@ export default {
         );
         if (aMatches.length > 5) {
           aMatches = aMatches.slice(0, 5);
+          this.suggestions = aMatches;
+        } else if (aMatches.length < 5) {
+          this.search_players(sToSearch, aPlayerNames => {
+            if (aMatches.length + aPlayerNames.length > 5) {
+              aPlayerNames = aPlayerNames.slice(0, 5 - aMatches.length);
+            }
+            this.suggestions = aMatches.concat(aPlayerNames);
+          });
         }
-        this.suggestions = aMatches;
       } else {
         this.suggestions = [];
       }
+    },
+    search_players(sSearch, callback) {
+      if(sSearch.length < 3){
+        callback([]);
+      }
+      this.$ws.send(
+        new WebSocketRequest(
+          "search",
+          sSearch,
+          resp => {
+            if (resp.type == "searchResponse") {
+              callback(JSON.parse(resp.data).map(sPlayer => sPlayer[0]));
+            }
+          },
+          err => {
+            console.log(err);
+          }
+        )
+      );
     },
     item_selected(e, item_name) {
       if (!item_name) {
