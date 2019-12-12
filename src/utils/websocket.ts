@@ -41,7 +41,7 @@ export class WebSocketManager {
       return;
     }
     delete response.mId;
-    if (response.type === "error") {
+    if (response.type.includes('error')) {
       req.error(response);
     } else {
       req.success(response);

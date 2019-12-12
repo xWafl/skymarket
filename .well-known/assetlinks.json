@@ -1,0 +1,5 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target" : { "namespace": "android_app", "package_name": "de.flou.skyblockapp",
+                 "sha256_cert_fingerprints": ["CD:8D:B0:5C:F7:96:82:3A:E2:1F:9C:9E:41:01:34:25:6C:04:CA:FF:A6:C0:2D:60:EB:65:E0:F5:A4:0C:3D:74"] }
+  }]
