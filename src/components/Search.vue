@@ -11,14 +11,15 @@
               placeholder="search item or player"
               :value="searchInput"
               debounce="100"
+              style="width: 100vw !important"
               @ionChange="search($event)"
             ></ion-searchbar>
           </ion-row>
           <ion-list v-if="suggestions.length > 0">
-            <ion-row v-for="item in suggestions" v-bind:key="item">
-              <ion-item button="true" @click="item_selected($event, item)">
+            <ion-row v-for="item in suggestions" v-bind:key="item.name">
+              <ion-item button="true" @click="item_or_player_selected($event, item)">
                 {{
-                item
+                item.data.name
                 }}
               </ion-item>
             </ion-row>
@@ -42,7 +43,16 @@ export default {
       suggestions: []
     };
   },
-  mounted() {},
+  mounted() {
+    this.$nextTick(() => {
+      bus.$on("initialize-fetchspan", fetchspan => {
+        this.item_or_player_selected(null, {
+          type: "item",
+          data: { name: "cobblestone" }
+        });
+      });
+    });
+  },
   methods: {
     search(e) {
       let sToSearch = e.target.value;
@@ -51,6 +61,9 @@ export default {
         var aMatches = this.items.filter(item =>
           item.toLowerCase().startsWith(sToSearch)
         );
+        aMatches = aMatches.map(item => {
+          return { type: "item", data: { name: item } };
+        });
         if (aMatches.length > 5) {
           aMatches = aMatches.slice(0, 5);
           this.suggestions = aMatches;
@@ -67,7 +80,7 @@ export default {
       }
     },
     search_players(sSearch, callback) {
-      if(sSearch.length < 3){
+      if (sSearch.length < 3) {
         callback([]);
       }
       this.$ws.send(
@@ -76,7 +89,16 @@ export default {
           sSearch,
           resp => {
             if (resp.type == "searchResponse") {
-              callback(JSON.parse(resp.data).map(sPlayer => sPlayer[0]));
+              callback(
+                JSON.parse(resp.data).map(sPlayer => {
+                  // sPlayer[0] => name
+                  // sPlayer[1] => uuid
+                  return {
+                    type: "player",
+                    data: { name: sPlayer[0], uuid: sPlayer[1] }
+                  };
+                })
+              );
             }
           },
           err => {
@@ -85,17 +107,17 @@ export default {
         )
       );
     },
-    item_selected(e, item_name) {
-      if (!item_name) {
+    item_or_player_selected(e, oSelected) {
+      if (!oSelected) {
         return;
       }
       this.clearSearchFields();
-      bus.$emit("search-changed", item_name);
+      bus.$emit("search-changed", oSelected);
     },
     onSubmit(e) {
       e.preventDefault();
       if (this.suggestions[0]) {
-        this.item_selected(null, this.suggestions[0]);
+        this.item_or_player_selected(null, this.suggestions[0]);
       }
     },
     clearSearchFields() {

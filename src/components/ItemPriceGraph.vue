@@ -1,18 +1,30 @@
 <template>
-  <div id="chartContainer"></div>
+  <div>
+    <FetchspanButtons></FetchspanButtons>
+    <div id="chartContainer"></div>
+    <ion-item>
+      <ion-label>Average Price</ion-label>
+      <ion-badge slot="end" color="light">{{average_price}}</ion-badge>
+    </ion-item>
+  </div>
 </template>
 
 <script>
 import { WebSocketRequest } from "@/utils/websocket";
 import { bus } from "../main";
-import { numberFormat } from 'highcharts';
+import { numberFormat } from "highcharts";
+import FetchspanButtons from "./FetchspanButtons";
 export default {
   name: "ItemPriceGraph",
+  components: {
+    FetchspanButtons
+  },
   data() {
     return {
       fetchspan: undefined,
-      item_name: "",
+      item: {},
       chart: undefined,
+      average_price: 0,
       chartOptions: {
         chart: {
           type: "spline"
@@ -42,32 +54,57 @@ export default {
               d.toLocaleDateString() +
               "<br/>" +
               "price: " +
-              numberFormat(this.y,0)
+              numberFormat(this.y, 0)
             );
           }
         }
       }
     };
   },
+  mounted() {
+    this.chart = Highcharts.chart("chartContainer", this.chartOptions);
+    bus.$on("search-changed", oToSearch => {
+      this.item = oToSearch;
+      this.getChartData(oToSearch);
+    });
+    bus.$on("fetchspan-changed", newFetchspan => {
+      this.fetchspan = newFetchspan;
+      if (this.item) {
+        this.getChartData(this.item);
+      }
+    });
+    bus.$on("initialize-fetchspan", newFetchspan => {
+      this.fetchspan = newFetchspan;
+      this.chart.reflow();
+    });
+  },
   methods: {
-    getChartData(sSearch) {
+    getChartData(oToSearch) {
       this.chart.showLoading();
+      let sRequestType = "";
+      let oRequestBody = {};
+      if (oToSearch.type !== "item") {
+        return;
+      }
+      sRequestType = "itemPrices";
+      oRequestBody.name = oToSearch.data.name;
+      oRequestBody.start = Math.round(this.fetchspan / 1000);
+      oRequestBody = JSON.stringify(oRequestBody);
       this.$ws.send(
         new WebSocketRequest(
-          "itemDetails",
-          JSON.stringify({
-            name: sSearch,
-            start: Math.round(this.fetchspan / 1000)
-          }),
+          sRequestType,
+          oRequestBody,
           resp => {
-            if (resp.type == "item") {
+            if (resp.type == "itemResponse") {
               let data = JSON.parse(resp.data);
               data.map(item => new Date(item.end));
               data = data.sort((a, b) => {
                 return a.end > b.end ? 1 : -1;
               });
               let nPriceSum = 0;
-              this.chart.setTitle({ text: this.item_name + " price graph" });
+              this.chart.setTitle({
+                text: this.item.data.name + " price graph"
+              });
               this.chart.xAxis[0].setCategories(data.map(item => item.end));
               this.chart.series[0].setData(
                 data.map(item => {
@@ -75,7 +112,10 @@ export default {
                   return item.price;
                 })
               );
-              bus.$emit("average_item_price_updated", nPriceSum/data.length);
+              this.average_price = numberFormat(
+                Math.round((nPriceSum / data.length) * 100.0) / 100.0,
+                0
+              );
             }
             this.chart.hideLoading();
           },
@@ -87,22 +127,6 @@ export default {
         )
       );
     }
-  },
-  mounted() {
-    this.chart = Highcharts.chart("chartContainer", this.chartOptions);
-    bus.$on("search-changed", sToSearch => {
-      this.item_name = sToSearch;
-      this.getChartData(sToSearch);
-    });
-    bus.$on("fetchspan-changed", fetchspan => {
-      if (this.item_name && fetchspan) {
-        this.fetchspan = fetchspan;
-        this.getChartData(this.item_name);
-      }
-    });
-    bus.$on("initialize-fetchspan", fetchspan => {
-      this.fetchspan = fetchspan;
-    });
   }
 };
 </script>

@@ -14,14 +14,6 @@
             <ion-label>Diamond Sword</ion-label>
             <ion-badge slot="end" color="light">69</ion-badge>
           </ion-item>
-          <ion-item>
-            <ion-label>Rod</ion-label>
-            <ion-badge slot="end" color="light">420</ion-badge>
-          </ion-item>
-          <ion-item>
-            <ion-label>Gold Helmet</ion-label>
-            <ion-badge slot="end" color="light">42</ion-badge>
-          </ion-item>
         </ion-list>
       </ion-card-content>
     </ion-card>
@@ -39,14 +31,6 @@
           <ion-item>
             <ion-label>Diamond Sword</ion-label>
             <ion-badge slot="end" color="light">69</ion-badge>
-          </ion-item>
-          <ion-item>
-            <ion-label>Rod</ion-label>
-            <ion-badge slot="end" color="light">420</ion-badge>
-          </ion-item>
-          <ion-item>
-            <ion-label>Gold Helmet</ion-label>
-            <ion-badge slot="end" color="light">42</ion-badge>
           </ion-item>
         </ion-list>
       </ion-card-content>

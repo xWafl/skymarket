@@ -1,10 +1,5 @@
 <template>
   <div class="ion-page">
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ headline }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
     <ion-content class="ion-padding">
       <Search v-on:get-code="getCodeInfo" v-if="homeView" />
       <ItemInfo v-if="this.homeView" v-on:switch-view="swtichView" />
