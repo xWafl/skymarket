@@ -44,14 +44,6 @@ export default {
     };
   },
   mounted() {
-    this.$nextTick(() => {
-      bus.$on("initialize-fetchspan", fetchspan => {
-        this.item_or_player_selected(null, {
-          type: "item",
-          data: { name: "cobblestone" }
-        });
-      });
-    });
   },
   methods: {
     search(e) {

@@ -1,7 +1,9 @@
 <template>
   <div>
     <FetchspanButtons></FetchspanButtons>
-    <div id="chartContainer"></div>
+    <div style="height: 60vh">
+      <canvas id="priceChart"></canvas>
+    </div>
     <ion-item>
       <ion-label>Average Price</ion-label>
       <ion-badge slot="end" color="light">{{average_price}}</ion-badge>
@@ -14,6 +16,7 @@ import { WebSocketRequest } from "@/utils/websocket";
 import { bus } from "../main";
 import { numberFormat } from "highcharts";
 import FetchspanButtons from "./FetchspanButtons";
+import Chart from "chart.js";
 export default {
   name: "ItemPriceGraph",
   components: {
@@ -23,46 +26,47 @@ export default {
     return {
       fetchspan: undefined,
       item: {},
-      chart: undefined,
       average_price: 0,
-      chartOptions: {
-        chart: {
-          type: "spline"
-        },
-        title: {
-          text: "item price graph"
-        },
-        yAxis: {
-          title: {
-            text: "price"
-          }
-        },
-        xAxis: {
-          visible: false
-        },
-        series: [
-          {
-            name: "item price"
-          }
-        ],
-        tooltip: {
-          formatter: function() {
-            let d = new Date(this.x);
-            return (
-              d.toLocaleTimeString() +
-              ", " +
-              d.toLocaleDateString() +
-              "<br/>" +
-              "price: " +
-              numberFormat(this.y, 0)
-            );
-          }
-        }
-      }
+      priceChart: undefined
     };
   },
   mounted() {
-    this.chart = Highcharts.chart("chartContainer", this.chartOptions);
+    this.priceChart = this.createChart("priceChart", {
+      type: "line",
+      data: {
+        datasets: [
+          {
+            label: "price",
+            borderColor: "#22A7F0",
+            fill: false
+          }
+        ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        title: {
+          display: true,
+          text: "Item price"
+        },
+        tooltips: {
+          mode: "index",
+          intersect: false
+        },
+        scales: {
+          xAxes: [
+            {
+              type: "time",
+              distribution: "linear"
+            }
+          ]
+        },
+        elements: {
+          point: {
+            radius: 0
+          }
+        }
+      }
+    });
     bus.$on("search-changed", oToSearch => {
       this.item = oToSearch;
       this.getChartData(oToSearch);
@@ -75,12 +79,16 @@ export default {
     });
     bus.$on("initialize-fetchspan", newFetchspan => {
       this.fetchspan = newFetchspan;
-      this.chart.reflow();
+      /*
+      bus.$emit("search-changed", {
+        type: "item",
+        data: { name: "Cobblestone" }
+      });
+      */
     });
   },
   methods: {
     getChartData(oToSearch) {
-      this.chart.showLoading();
       let sRequestType = "";
       let oRequestBody = {};
       if (oToSearch.type !== "item") {
@@ -102,30 +110,32 @@ export default {
                 return a.end > b.end ? 1 : -1;
               });
               let nPriceSum = 0;
-              this.chart.setTitle({
-                text: this.item.data.name + " price graph"
+              this.priceChart.data.labels = data.map(item => item.end);
+              this.priceChart.data.datasets[0].data = data.map(item => {
+                nPriceSum += item.price;
+                return item.price;
               });
-              this.chart.xAxis[0].setCategories(data.map(item => item.end));
-              this.chart.series[0].setData(
-                data.map(item => {
-                  nPriceSum += item.price;
-                  return item.price;
-                })
-              );
+              this.priceChart.update();
               this.average_price = numberFormat(
                 Math.round((nPriceSum / data.length) * 100.0) / 100.0,
                 0
               );
             }
-            this.chart.hideLoading();
           },
           err => {
-            this.chart.hideLoading();
             console.log("err callback");
             console.log(err);
           }
         )
       );
+    },
+    createChart(chartId, chartData) {
+      const ctx = document.getElementById(chartId);
+      return new Chart(ctx, {
+        type: chartData.type,
+        data: chartData.data,
+        options: chartData.options
+      });
     }
   }
 };
