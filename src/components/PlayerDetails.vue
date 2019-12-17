@@ -78,7 +78,6 @@ export default {
           resp => {
             if (resp.type == "playerResponse") {
               let player = JSON.parse(resp.data);
-              console.log(player);
               this.auctions = player.auctions.map(auction => {
                 if (auction.highestBid == 0) {
                   auction.priceFormatted = "no bid";
