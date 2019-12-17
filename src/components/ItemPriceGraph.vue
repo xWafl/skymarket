@@ -69,6 +69,7 @@ export default {
         scales:{
           yAxes:[{
             ticks:{
+              beginAtZero: true,
               callback: function(value,index,values){
                 return numberFormat(value,0);
               }

@@ -3,7 +3,6 @@
     <ion-content class="ion-padding">
       <Search v-on:get-code="getCodeInfo" v-if="homeView" />
       <ItemInfo v-if="this.homeView" v-on:switch-view="swtichView" />
-      <PlayerInfo v-if="!this.homeView" v-on:switch-view="swtichView" />
     </ion-content>
   </div>
 </template>
@@ -11,13 +10,11 @@
 <script>
 import Search from "@/components/Search";
 import ItemInfo from "@/components/ItemInfo";
-import PlayerInfo from "@/components/PlayerInfo";
 export default {
   name: "home",
   components: {
     Search,
-    ItemInfo,
-    PlayerInfo
+    ItemInfo
   },
   data() {
     return {

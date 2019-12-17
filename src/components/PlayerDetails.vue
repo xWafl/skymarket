@@ -8,53 +8,38 @@
         <ion-label>Bids</ion-label>
       </ion-segment-button>
     </ion-segment>
-    <ion-card v-if="selectedSegmentButton == 'auctions'" class="fixedScrollBox">
-      <ion-item>
-        <ion-label>Auctions</ion-label>
-      </ion-item>
-      <ion-card-content>
-        <ion-list>
-          <ion-list-header>
-            <ion-label>Item</ion-label>
-            <ion-label>Highest Bid</ion-label>
-          </ion-list-header>
-          <ion-item v-for="auction in auctions" v-bind:key="auction.auctionId">
-            <ion-label>{{auction.itemName}}</ion-label>
-            <ion-badge slot="end" color="light">{{auction.priceFormatted}}</ion-badge>
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
 
-    <ion-card v-if="selectedSegmentButton == 'bids'" class="fixedScrollBox">
-      <ion-item>
-        <ion-label>Bids</ion-label>
-      </ion-item>
-      <ion-card-content>
-        <ion-list>
-          <ion-list-header>
-            <ion-label>Item</ion-label>
-            <ion-label>Own Bid</ion-label>
-            <ion-label>Highest Bid</ion-label>
-          </ion-list-header>
-          <ion-item v-for="bid in bids" v-bind:key="bid.auctionId">
-            <ion-grid>
-              <ion-row style="width: 100% ">
-                <ion-col>
-                  <ion-label>{{bid.itemName}}</ion-label>
-                </ion-col>
-                <ion-col style="text-align: center">
-                  <ion-badge color="light">{{bid.highestBid}}</ion-badge>
-                </ion-col>
-                <ion-col style="text-align: right">
-                  <ion-badge color="light">{{bid.highestOwn}}</ion-badge>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
+    <ion-list v-if="selectedSegmentButton == 'auctions'" class="fixedScrollBox">
+      <ion-card v-for="auction in auctions" v-bind:key="auction.auctionId">
+        <ion-grid>
+          <ion-card-title class="auctionAndBidItemHeader">{{auction.itemName}}</ion-card-title>
+          <ion-row>
+            <ion-col>
+              <ion-label>Highest:</ion-label>
+              {{formatNumber(auction.highestBid)}}
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card>
+    </ion-list>
+
+    <ion-list v-if="selectedSegmentButton == 'bids'" class="fixedScrollBox">
+      <ion-card v-for="bid in bids" v-bind:key="bid.auctionId">
+        <ion-grid>
+          <ion-card-title class="auctionAndBidItemHeader">{{bid.itemName}}</ion-card-title>
+          <ion-row>
+            <ion-col>
+              <ion-label>Own:</ion-label>
+              {{formatNumber(bid.highestOwn)}}
+            </ion-col>
+            <ion-col>
+              <ion-label>Highest:</ion-label>
+              {{formatNumber(bid.highestBid)}}
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card>
+    </ion-list>
   </div>
 </template>
 
@@ -96,7 +81,7 @@ export default {
               console.log(player);
               this.auctions = player.auctions.map(auction => {
                 if (auction.highestBid == 0) {
-                    auction.priceFormatted = "no bid";
+                  auction.priceFormatted = "no bid";
                 } else {
                   auction.priceFormatted = numberFormat(auction.highestBid, 0);
                 }
@@ -115,6 +100,9 @@ export default {
     },
     segmentButtonChanged(event) {
       this.selectedSegmentButton = event.detail.value;
+    },
+    formatNumber(number) {
+      return numberFormat(number, 0);
     }
   }
 };
@@ -122,7 +110,14 @@ export default {
 
 <style>
 .fixedScrollBox {
-  height: 40vh;
+  height: 70vh;
   overflow-y: scroll;
+}
+.auctionAndBidItemHeader {
+  min-height: 35px;
+}
+ion-card {
+  color: black;
+  border: 1px solid grey;
 }
 </style>

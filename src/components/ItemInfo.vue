@@ -3,10 +3,6 @@
     <!-- Diagram -->
     <ItemPriceGraph v-show="search_type == 'item'"></ItemPriceGraph>
     <PlayerDetails v-show="search_type == 'player'"></PlayerDetails>
-
-    <ion-col>
-      <ion-button @click="switchView">Switch View</ion-button>
-    </ion-col>
   </div>
 </template>
 
@@ -32,11 +28,7 @@ export default {
       this.search_type = oToSearch.type;
     });
   },
-  methods: {
-    switchView() {
-      this.$emit("switch-view");
-    }
-  }
+  methods: {}
 };
 </script>
 
