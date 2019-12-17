@@ -50,20 +50,33 @@ export default {
         },
         tooltips: {
           mode: "index",
-          intersect: false
-        },
-        scales: {
-          xAxes: [
-            {
-              type: "time",
-              distribution: "linear"
+          intersect: false,
+          callbacks: {
+            label: function(tooltipItem, data) {
+              return numberFormat(tooltipItem.value, 0);
+            },
+            title: function(tooltipItem, data) {
+              let d = new Date(tooltipItem[0].label);
+              return d.toLocaleTimeString() + ", " + d.toLocaleDateString();
             }
-          ]
+          }
         },
         elements: {
           point: {
             radius: 0
           }
+        },
+        scales:{
+          yAxes:[{
+            ticks:{
+              callback: function(value,index,values){
+                return numberFormat(value,0);
+              }
+            }
+          }],
+          xAxes:[{
+            type: 'time'
+          }]
         }
       }
     });
