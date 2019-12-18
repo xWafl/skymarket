@@ -92,52 +92,52 @@ export default {
           );
         }
       }
-    }
-  },
-  search_players(sSearch, callback) {
-    if (sSearch.length < 3) {
-      callback([]);
-    }
-    this.$ws.send(
-      new WebSocketRequest(
-        "search",
-        sSearch,
-        resp => {
-          if (resp.type == "searchResponse") {
-            callback(
-              JSON.parse(resp.data).map(sPlayer => {
-                // sPlayer[0] => name
-                // sPlayer[1] => uuid
-                return {
-                  type: "player",
-                  data: { name: sPlayer[0], uuid: sPlayer[1] }
-                };
-              })
-            );
+    },
+    search_players(sSearch, callback) {
+      if (sSearch.length < 3) {
+        callback([]);
+      }
+      this.$ws.send(
+        new WebSocketRequest(
+          "search",
+          sSearch,
+          resp => {
+            if (resp.type == "searchResponse") {
+              callback(
+                JSON.parse(resp.data).map(sPlayer => {
+                  // sPlayer[0] => name
+                  // sPlayer[1] => uuid
+                  return {
+                    type: "player",
+                    data: { name: sPlayer[0], uuid: sPlayer[1] }
+                  };
+                })
+              );
+            }
+          },
+          err => {
+            console.log(err);
           }
-        },
-        err => {
-          console.log(err);
-        }
-      )
-    );
-  },
-  item_or_player_selected(e, oSelected) {
-    if (!oSelected) {
-      return;
+        )
+      );
+    },
+    item_or_player_selected(e, oSelected) {
+      if (!oSelected) {
+        return;
+      }
+      this.clearSearchFields();
+      bus.$emit("search-changed", oSelected);
+    },
+    onSubmit(e) {
+      e.preventDefault();
+      if (this.suggestions[0]) {
+        this.item_or_player_selected(null, this.suggestions[0]);
+      }
+    },
+    clearSearchFields() {
+      this.suggestions = [];
+      this.searchInput = null;
     }
-    this.clearSearchFields();
-    bus.$emit("search-changed", oSelected);
-  },
-  onSubmit(e) {
-    e.preventDefault();
-    if (this.suggestions[0]) {
-      this.item_or_player_selected(null, this.suggestions[0]);
-    }
-  },
-  clearSearchFields() {
-    this.suggestions = [];
-    this.searchInput = null;
   }
 };
 </script>
