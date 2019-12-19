@@ -7,8 +7,8 @@ export function stringStartsWith(
     return true;
   }
   if (ignore) {
-    str1 = str1.toLowerCase();
-    str2 = str2.toLowerCase();
+    str1 = str1.toString().toLowerCase();
+    str2 = str2.toString().toLowerCase();
   }
   for (let i = 0; i < str1.length; i++) {
     if (str1.charAt(i) != str2.charAt(i)) {

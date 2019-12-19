@@ -1,11 +1,19 @@
+import { DbManager } from "./indexeddb";
+
 let requests: Array<WebSocketRequest> = [];
+let db: DbManager;
+let blocked = false;
 
 export class WebSocketManager {
-  public ws: WebSocket;
+  public ws!: WebSocket;
 
   constructor() {
-    //this.ws = new WebSocket("wss://skyblock-backend.coflnet.com/skyblock");
-    this.ws = new WebSocket("ws://84.200.7.41:8008/skyblock");
+    db = new DbManager();
+    this.openWebsocket();
+  }
+
+  private openWebsocket(): void {
+    this.ws = new WebSocket("wss://skyblock-backend.coflnet.com/skyblock");
     this.ws.onmessage = this.onMessage;
     this.ws.onclose = this.onClose;
     this.ws.onerror = this.onError;
@@ -13,22 +21,34 @@ export class WebSocketManager {
   }
 
   public send(request: WebSocketRequest): void {
-    if (this.ws.readyState === WebSocket.OPEN) {
-      request.data = btoa(request.data);
+    db.searchCache(request)
+      .then((resp: any) => {
+        if (resp && resp.length >= 5) {
+          request.success(resp);
+        } else {
+          if (this.ws.readyState === WebSocket.OPEN) {
+            request.data = btoa(request.data);
 
-      // save and send message
-      requests.push(request);
-      this.ws.send(JSON.stringify(request));
-    } else {
-      if (WebSocketRequest.errorSending >= 2) {
-        request.error({ error: "No Websocket connection available" });
-        return;
-      }
-      WebSocketRequest.errorSending++;
-      setTimeout(() => {
-        this.send(request);
-      }, 4000);
-    }
+
+            // save and send message
+            requests.push(request);
+            this.ws.send(JSON.stringify(request));
+          } else {
+            this.openWebsocket();
+            if (WebSocketRequest.errorSending >= 7) {
+              request.error({ error: "No Websocket connection available" });
+              return;
+            }
+            WebSocketRequest.errorSending++;
+            setTimeout(() => {
+              this.send(request);
+            }, 1000);
+          }
+        }
+      })
+      .catch((err: any) => {
+        console.warn(err);
+      })
   }
 
   onOpen(): void {
@@ -42,9 +62,26 @@ export class WebSocketManager {
       return;
     }
     delete response.mId;
-    if (response.type.includes('error')) {
+    if (response.type.includes("error")) {
       req.error(response);
     } else {
+      // add into local db
+      // if user search
+      if (req.type === "search") {
+        db.cacheUserSearchResponse(req, response);
+      } else if (req.type === "itemDetails") {
+        if (!blocked) {
+          blocked = true;
+          db.cacheItemDetailsResponse(req, response).then(() => blocked = false);
+        }
+
+      } else if (req.type === "validation_error") {
+        // 
+      } else {
+        console.log("currently not possible to catch");
+        console.log(req);
+      }
+
       req.success(response);
     }
   }
