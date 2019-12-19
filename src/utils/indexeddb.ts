@@ -27,21 +27,21 @@ export class DbManager {
   async cacheUserSearchResponse(request: WebSocketRequest, response: any) {
     const transaction = this.db.transaction("users", "readwrite");
     JSON.parse(response.data).forEach((element: any) => {
-      transaction.store.add({
+      transaction.store.put({
         name: element[0],
         data: element[1],
         number: element[2],
         timestamp: new Date()
       });
     });
-    await transaction.done.catch((err: any) => console.log(err));
+    await transaction.done;
   }
 
   async cacheItemDetailsResponse(request: WebSocketRequest, response: any) {
     const transaction = this.db.transaction("itemDetails", "readwrite");
     let data = JSON.parse(response.data);
     data.timestamp = new Date();
-    transaction.store.add(data);
+    transaction.store.put(data);
     await transaction.done;
   }
 
@@ -61,8 +61,10 @@ export class DbManager {
       trans = this.db.transaction("itemDetails", "readwrite");
       store = trans.objectStore("itemDetails");
       store.getAll().then((value: any) => {
-        value.filter((x: any) => x.timestamp.getTime()
-          + this.cacheLifetime < Date.now())
+        value
+          .filter(
+            (x: any) => x.timestamp.getTime() + this.cacheLifetime < Date.now()
+          )
           .forEach((y: any) => store.delete(y.Name));
       });
       trans.done;
@@ -71,15 +73,30 @@ export class DbManager {
 
   searchCache(request: WebSocketRequest) {
     return new Promise((resolve, reject) => {
-      switch(request.type) {
+      switch (request.type) {
         case "search":
-          this.db.transaction('users', 'readwrite').objectStore('users').getAll()
+          this.db
+            .transaction("users", "readwrite")
+            .objectStore("users")
+            .getAll()
             .then((value: any) => {
-              resolve(value.filter((x: any) => 
-                x.name.toString().toLowerCase()
-                  .startsWith(request.data.toString().toLowerCase())
-              ));
-            });
+              let z = value.filter((x: any) =>
+              x.name
+                .toString()
+                .toLowerCase()
+                .startsWith(request.data.toString().toLowerCase()));
+              if (z.length < 5) {
+                resolve();
+              }
+              let d: any = [];
+              z.forEach((element: any) => {
+                d.push([element.name, element.data, 0]) ;
+              });
+              resolve({
+                  type: "searchResponse",
+                  data: JSON.stringify(d)
+                });
+              });
           break;
         default:
           resolve();

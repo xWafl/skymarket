@@ -23,12 +23,12 @@ export class WebSocketManager {
   public send(request: WebSocketRequest): void {
     db.searchCache(request)
       .then((resp: any) => {
-        if (resp && resp.length >= 5) {
+        if (resp) {
           request.success(resp);
         } else {
+          console.log(resp);
           if (this.ws.readyState === WebSocket.OPEN) {
             request.data = btoa(request.data);
-
 
             // save and send message
             requests.push(request);
@@ -48,7 +48,7 @@ export class WebSocketManager {
       })
       .catch((err: any) => {
         console.warn(err);
-      })
+      });
   }
 
   onOpen(): void {
@@ -72,16 +72,16 @@ export class WebSocketManager {
       } else if (req.type === "itemDetails") {
         if (!blocked) {
           blocked = true;
-          db.cacheItemDetailsResponse(req, response).then(() => blocked = false);
+          db.cacheItemDetailsResponse(req, response).then(
+            () => (blocked = false)
+          );
         }
-
       } else if (req.type === "validation_error") {
-        // 
+        //
       } else {
         console.log("currently not possible to catch");
         console.log(req);
       }
-
       req.success(response);
     }
   }
