@@ -26,7 +26,6 @@ export class WebSocketManager {
         if (resp) {
           request.success(resp);
         } else {
-          console.log(resp);
           if (this.ws.readyState === WebSocket.OPEN) {
             request.data = btoa(request.data);
 

@@ -16,9 +16,16 @@
             ></ion-searchbar>
           </ion-row>
           <ion-list v-if="suggestions.length > 0">
-            <ion-row v-for="item in suggestions" v-bind:key="item.name">
+            <ion-row v-for="item in suggestions" v-bind:key="item.data.name">
               <ion-thumbnail v-if="item.type == 'player'" style="--size: 35px">
                 <ion-img :src="'https://crafatar.com/avatars/' + item.data.uuid"></ion-img>
+              </ion-thumbnail>
+              <ion-thumbnail
+                v-if="item.type == 'item'"
+                style="--size: 35px"
+                :key="item.data.imgsrc"
+              >
+                <ion-img :src="item.data.imgsrc"></ion-img>
               </ion-thumbnail>
               <ion-item button="true" @click="item_or_player_selected($event, item)">
                 {{
@@ -61,36 +68,18 @@ export default {
         if (aMatches.length > 5) {
           aMatches = aMatches.slice(0, 5);
           this.suggestions = aMatches;
+          this.loadImagesForSuggestions();
         } else if (aMatches.length < 5) {
           this.search_players(sToSearch, aPlayerNames => {
             if (aMatches.length + aPlayerNames.length > 5) {
               aPlayerNames = aPlayerNames.slice(0, 5 - aMatches.length);
             }
             this.suggestions = aMatches.concat(aPlayerNames);
+            this.loadImagesForSuggestions();
           });
         }
       } else {
         this.suggestions = [];
-      }
-      for (let i = 0; i < this.suggestions.length; i++) {
-        const suggestion = this.suggestions[i];
-        if (suggestion.type === "item") {
-          this.$ws.send(
-            new WebSocketRequest(
-              "itemDetails",
-              JSON.stringify(suggestion.data.name),
-              resp => {
-                if (resp.type == "itemDetailsResponse") {
-                  let data = JSON.parse(resp.data);
-                  // TODO itemdetails verarbeiten
-                }
-              },
-              err => {
-                console.log(err);
-              }
-            )
-          );
-        }
       }
     },
     search_players(sSearch, callback) {
@@ -137,6 +126,54 @@ export default {
     clearSearchFields() {
       this.suggestions = [];
       this.searchInput = null;
+    },
+    loadImagesForSuggestions() {
+      let aPromises = [];
+      for (let i = 0; i < this.suggestions.length; i++) {
+        const suggestion = this.suggestions[i];
+        if (suggestion.type === "item") {
+          if (!suggestion.data.srcimg) {
+            aPromises.push(
+              new Promise((resolve, reject) => {
+                this.$ws.send(
+                  new WebSocketRequest(
+                    "itemDetails",
+                    JSON.stringify(suggestion.data.name),
+                    resp => {
+                      if (resp.type == "itemDetailsResponse") {
+                        let data = JSON.parse(resp.data);
+                        let index = this.suggestions.findIndex(suggestion => {
+                          return (
+                            suggestion.type == "item" &&
+                            suggestion.data.name === data.Name
+                          );
+                        });
+                        if (index != -1) {
+                          // this.suggestions[index].data.name is the binded key to the list
+                          // -> to update the entry it has to change for the image to be updated
+                          this.suggestions[index].data.imgsrc = data.IconUrl;
+                        }
+                      }
+                      resolve();
+                    },
+                    err => {
+                      reject(err);
+                    }
+                  )
+                );
+              })
+            );
+          }
+        }
+      }
+      Promise.all(aPromises).then(() => {
+        for (let i = 0; i < this.suggestions.length; i++) {
+          const suggestion = this.suggestions[i];
+          let temp = suggestion.data.name;
+          suggestion.data.name = "";
+          suggestion.data.name = temp;
+        }
+      });
     }
   }
 };
