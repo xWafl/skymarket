@@ -9,6 +9,7 @@
             -->
             <ion-searchbar
               placeholder="search item or player"
+              ref="searchbar"
               :value="searchInput"
               debounce="100"
               style="width: 100vw !important"
@@ -53,7 +54,24 @@ export default {
       suggestions: []
     };
   },
-  mounted() {},
+  mounted() {
+    // setFocus only works after some delay
+    // loading default item also only works correctly if delayed
+    // no better way found
+    setTimeout(() => {
+      this.$refs.searchbar.setFocus();
+    }, 500);
+
+    // delay of 0ms because then function is called after
+    // rendering is finished
+    // no better way found
+    setTimeout(() => {
+      bus.$emit("search-changed", {
+        type: "item",
+        data: { name: "Diamond" }
+      });
+    }, 0);
+  },
   methods: {
     search(e) {
       let sToSearch = e.target.value;

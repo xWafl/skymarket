@@ -93,12 +93,6 @@ export default {
     });
     bus.$on("initialize-fetchspan", newFetchspan => {
       this.fetchspan = newFetchspan;
-      /*
-      bus.$emit("search-changed", {
-        type: "item",
-        data: { name: "Cobblestone" }
-      });
-      */
     });
   },
   methods: {
@@ -124,6 +118,7 @@ export default {
                 return a.end > b.end ? 1 : -1;
               });
               let nPriceSum = 0;
+              this.priceChart.options.title.text = "Price for 1 " + oToSearch.data.name;
               this.priceChart.data.labels = data.map(item => item.end);
               this.priceChart.data.datasets[0].data = data.map(item => {
                 nPriceSum += item.price;
