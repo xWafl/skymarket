@@ -1,6 +1,7 @@
 import Vue from "vue";
 import { IonicVueRouter } from "@ionic/vue";
 import Home from "../views/Home.vue";
+import Dictionary from "../views/Dictionary.vue";
 
 Vue.use(IonicVueRouter);
 
@@ -9,6 +10,11 @@ const routes = [
     path: "/",
     name: "home",
     component: Home
+  },
+  {
+    path: "/reference/",
+    name: "reference",
+    component: Dictionary,
   }
 ];
 
