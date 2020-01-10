@@ -6,27 +6,27 @@
     </div>
     <ion-item class="ionitem">
       <ion-label class="ionlabel">Average Price</ion-label>
-      <ion-badge slot="end" color="light">{{average_price}}</ion-badge>
+      <ion-badge slot="end" color="light">{{ average_price }}</ion-badge>
     </ion-item>
     <ion-item class="ionitem">
       <ion-label class="ionlabel">Average Price (no outliers)</ion-label>
-      <ion-badge slot="end" color="light">{{average_nou_display}}</ion-badge>
+      <ion-badge slot="end" color="light">{{ average_nou_display }}</ion-badge>
     </ion-item>
     <ion-item class="ionitem">
       <ion-label class="ionlabel">Growth Trend</ion-label>
-      <ion-badge slot="end" style="backgroundColor: white" v-bind:style="growthTrend > 0 ? {color: 'green'} : {color: 'red'}">{{growthTrend}}%</ion-badge>
+      <ion-badge slot="end" style="backgroundColor: white" v-bind:style="growthTrend > 0 ? {color: 'green'} : {color: 'red'}">{{ growthTrend }}%</ion-badge>
     </ion-item>
     <ion-item class="ionitem">
       <ion-label class="ionlabel">Deviation</ion-label>
-      <ion-badge slot="end" style="backgroundColor: white" v-bind:style="variance < 100 ? {color: 'green'} : {color: 'red'}">{{variance * 2}}%</ion-badge>
+      <ion-badge slot="end" style="backgroundColor: white" v-bind:style="variance < 100 ? {color: 'green'} : {color: 'red'}">{{ variance * 2 }}%</ion-badge>
     </ion-item>
     <ion-item class="ionitem">
       <ion-label class="ionlabel">Buy Price</ion-label>
-      <ion-badge slot="end" color="light">{{buyPrice}}</ion-badge>
+      <ion-badge slot="end" color="light">{{ buyPrice }}</ion-badge>
     </ion-item>
     <ion-item class="ionitem">
       <ion-label class="ionlabel">Sell price</ion-label>
-      <ion-badge slot="end" color="light">{{sellPrice}}</ion-badge>
+      <ion-badge slot="end" color="light">{{ sellPrice }}</ion-badge>
     </ion-item>
     <a href="/reference/">
       <ion-item class="ionitemwide" text-center>
@@ -34,7 +34,6 @@
       </ion-item>
     </a>
   </div>
-  
 </template>
 
 <style>
@@ -43,7 +42,7 @@
       width: 100%;
     }
   }
-  @media only screen and (min-width: 700px && max-width: 1000px) {
+  @media only screen and (max-width: 1000px) {
     .ionitem {
       width: 50%;
       display: inline-block;
@@ -208,8 +207,8 @@ export default {
             }
           },
           err => {
-            console.log("err callback");
-            console.log(err);
+            // console.log("err callback");
+            // console.log(err);
           }
         )
       );
@@ -226,10 +225,10 @@ export default {
         // console.log(outliercap + "|-|" + outlierbottom);
       } else if (type == "varied") {
         // console.log("Multiplier: " + (1 - (this.variance / 8)) + "|" + this.average_price_blank + "|" + ((1 - (this.variance / 8)) * this.average_price_blank));
-        console.log(this.variance);
+        // console.log(this.variance);
         outliercap = (1 + (this.variance * 2)) * this.average_price_blank;
         outlierbottom = (1 - (this.variance * 4)) * this.average_price_blank;
-        console.log(outliercap + "|=|" + outlierbottom);
+        // console.log(outliercap + "|=|" + outlierbottom);
       }
       // console.log(`Outlier cap: ${outliercap}`)
       for (let item of this.cached_data) {
@@ -241,7 +240,7 @@ export default {
           this.cached_no_outliers.push(null);
         }
       }
-      console.log(this.cached_no_outliers);
+      // console.log(this.cached_no_outliers);
       this.priceChart.data.datasets[1].data = this.cached_no_outliers;
       this.priceChart.update();
       this.average_no_outliers = Math.round((nPriceSum / nItems) * 100.0 / 100.0, 0);
