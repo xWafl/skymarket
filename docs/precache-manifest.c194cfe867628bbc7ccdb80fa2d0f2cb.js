@@ -1,7 +1,7 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "78156a4540606dbe0b1d",
-    "url": "/skymarket/css/app.1ded87a4.css"
+    "revision": "1a87da6f418f30acf374",
+    "url": "/skymarket/css/app.30922617.css"
   },
   {
     "revision": "5eb8c05e39bd97f9fbfa",
@@ -2792,12 +2792,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/skymarket/img/md-woman.05ce5b2c.svg"
   },
   {
-    "revision": "344c48855ed49b5eca85ba19a574cc3b",
+    "revision": "58d9058e7ed231e00eb072fcec2514a4",
     "url": "/skymarket/index.html"
   },
   {
-    "revision": "78156a4540606dbe0b1d",
-    "url": "/skymarket/js/app.39c280a9.js"
+    "revision": "1a87da6f418f30acf374",
+    "url": "/skymarket/js/app.e68067d5.js"
   },
   {
     "revision": "eba67231dfe3f6ce5dc8",

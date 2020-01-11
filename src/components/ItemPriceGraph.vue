@@ -28,11 +28,6 @@
       <ion-label class="ionlabel">Sell price</ion-label>
       <ion-badge slot="end" color="light">{{ sellPrice }}</ion-badge>
     </ion-item>
-    <a href="/reference/">
-      <ion-item class="ionitemwide" text-center>
-        <ion-label class="ionlabel">About</ion-label>
-      </ion-item>
-    </a>
   </div>
 </template>
 
@@ -234,7 +229,7 @@ export default {
         // console.log(this.variance);
         outliercap = (1 + (this.variance / 100 * 4)) * this.average_price_blank;
         outlierbottom = (1 - (this.variance / 100 * 6)) * this.average_price_blank;
-        console.log(outliercap + "|=|" + outlierbottom + "|" + this.variance + "|" + (1 + (this.variance / 100 * 2)));
+        // console.log(outliercap + "|=|" + outlierbottom + "|" + this.variance + "|" + (1 + (this.variance / 100 * 2)));
       }
       // console.log(`Outlier cap: ${outliercap}`)
       for (let item of this.cached_data) {
