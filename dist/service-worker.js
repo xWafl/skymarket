@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/skymarket/precache-manifest.32345b824c967e8863fa312ee2e51310.js"
+  "<skymarket>/precache-manifest.93db9fe896ea24af7d9fd4c7039ac693.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "skyblock-front"});

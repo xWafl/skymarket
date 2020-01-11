@@ -200,8 +200,14 @@ export default {
               this.getPriceNoOutliers("regular");
               this.getVariance("regular");
               this.growthTrend = this.getGrowthTrend(oToSearch);
-              this.getVariance("outlier");
-              this.getPriceNoOutliers("varied");
+              if (this.variance > 100) {
+                this.getVariance("outlier");
+                this.getPriceNoOutliers("varied");
+                this.getVariance("outlier");
+              } else {
+                this.getPriceNoOutliers("varied");
+                this.getVariance("outlier");
+              }
               this.buyPrice = this.getBuyPrice();
               this.sellPrice = this.getSellPrice();
             }
@@ -226,9 +232,9 @@ export default {
       } else if (type == "varied") {
         // console.log("Multiplier: " + (1 - (this.variance / 8)) + "|" + this.average_price_blank + "|" + ((1 - (this.variance / 8)) * this.average_price_blank));
         // console.log(this.variance);
-        outliercap = (1 + (this.variance * 2)) * this.average_price_blank;
-        outlierbottom = (1 - (this.variance * 4)) * this.average_price_blank;
-        // console.log(outliercap + "|=|" + outlierbottom);
+        outliercap = (1 + (this.variance / 100 * 4)) * this.average_price_blank;
+        outlierbottom = (1 - (this.variance / 100 * 6)) * this.average_price_blank;
+        console.log(outliercap + "|=|" + outlierbottom + "|" + this.variance + "|" + (1 + (this.variance / 100 * 2)));
       }
       // console.log(`Outlier cap: ${outliercap}`)
       for (let item of this.cached_data) {

@@ -20,7 +20,9 @@
           <ion-list v-if="suggestions.length > 0">
             <ion-row v-for="item in suggestions" v-bind:key="item.data.name">
               <ion-thumbnail v-if="item.type == 'player'" style="--size: 35px">
-                <ion-img :src="'https://crafatar.com/avatars/' + item.data.uuid"></ion-img>
+                <ion-img
+                  :src="'https://crafatar.com/avatars/' + item.data.uuid"
+                ></ion-img>
               </ion-thumbnail>
               <ion-thumbnail
                 v-if="item.type == 'item'"
@@ -69,7 +71,7 @@ export default {
     setTimeout(() => {
       bus.$emit("search-changed", {
         type: "item",
-        data: { name: "Diamond" }
+        data: { name: "Summoning Eye" }
       });
     }, 0);
   },
@@ -124,7 +126,7 @@ export default {
             }
           },
           err => {
-            console.log(err);
+            // console.log(err);
           }
         )
       );
