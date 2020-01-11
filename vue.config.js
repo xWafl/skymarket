@@ -18,5 +18,6 @@ module.exports = {
       ]
     }
   },
-  publicPath: "<skymarket>"
+  publicPath: "/skymarket",
+  outputDir: "docs",
 };
